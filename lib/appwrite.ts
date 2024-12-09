@@ -115,3 +115,19 @@ export const getCurrentUser = async () => {
     );
   }
 };
+
+export const getAllPosts = async () => {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.videosCollectionId
+    );
+    if (posts.documents.length === 0) {
+      console.log("No videos found in the collection.");
+    }
+
+    return posts.documents;
+  } catch (error) {
+    (error as { message?: string })?.message || "Videos not available";
+  }
+};
