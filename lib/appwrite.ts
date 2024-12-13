@@ -164,3 +164,20 @@ export const SearchPosts = async ({ query }: { query: string }) => {
     (error as { message?: string })?.message || "Videos not available";
   }
 };
+
+export const getUserPosts = async (userId: any) => {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.videosCollectionId,
+      [Query.equal("creator", userId)]
+    );
+    if (posts.documents.length === 0) {
+      console.log("No videos found in the collection.");
+    }
+
+    return posts.documents;
+  } catch (error) {
+    (error as { message?: string })?.message || "Videos not available";
+  }
+};
