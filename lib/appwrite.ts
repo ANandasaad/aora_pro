@@ -76,23 +76,22 @@ export const SignInUser = async ({
   password: string | undefined;
 }) => {
   try {
-    const sessions = await account.listSessions();
-    console.log(sessions);
-    if (sessions.total > 0) {
-      // Delete all existing sessions
-      for (const session of sessions.sessions) {
-        await account.deleteSession(session.$id);
-      }
-    }
+    // Try to fetch existing sessions
+
+    // Create a new session
     const session = await account.createEmailPasswordSession(
       email,
       password as string
     );
-  } catch (error) {
+    console.log("Session created:", session);
+    return session;
+  } catch (error: any) {
+    if (error.message?.includes("missing scope (account)")) {
+      console.error("User is unauthenticated. Please log in.");
+      throw new Error("User is unauthenticated. Please log in.");
+    }
     console.error("Error during SignInUser:", error);
-    throw new Error(
-      (error as { message?: string })?.message || "Login failed unexpectedly"
-    );
+    throw new Error(error.message || "Login failed unexpectedly");
   }
 };
 
@@ -179,5 +178,16 @@ export const getUserPosts = async (userId: any) => {
     return posts.documents;
   } catch (error) {
     (error as { message?: string })?.message || "Videos not available";
+  }
+};
+
+export const signOut = async () => {
+  try {
+    const session = await account.deleteSession("current");
+    return session;
+  } catch (error) {
+    throw new Error(
+      (error as { message?: string })?.message || " could not delete session"
+    );
   }
 };

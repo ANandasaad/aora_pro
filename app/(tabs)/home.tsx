@@ -17,12 +17,13 @@ import { getAllPosts, getLatestPosts } from "@/lib/appwrite";
 
 import useAppwrite from "@/lib/useAppwrite";
 import VideoCard from "@/components/VideoCard";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const Home = () => {
   const { data: posts, refetch } = useAppwrite(getAllPosts);
   const { data: latestPosts } = useAppwrite(getLatestPosts);
   const [refreshing, setRefreshing] = useState(false);
-
+  const { user, setUser, setIsLoggedIn } = useGlobalContext();
   const onRefresh = async () => {
     setRefreshing(true);
     // TODO: if video is loaded
@@ -63,7 +64,7 @@ const Home = () => {
                   Welcome Back
                 </Text>
                 <Text className="text-gray-100 text-2xl font-semibold">
-                  Dev Anand
+                  {user?.username}
                 </Text>
               </View>
               <View className="mt-1.5">

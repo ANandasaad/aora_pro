@@ -12,11 +12,11 @@ import React, { useEffect, useState } from "react";
 import SearchInput from "@/components/SearchInput";
 
 import EmptyState from "@/components/EmptyState";
-import { getUserPosts, SearchPosts } from "@/lib/appwrite";
+import { getUserPosts, SearchPosts, signOut } from "@/lib/appwrite";
 
 import useAppwrite from "@/lib/useAppwrite";
 import VideoCard from "@/components/VideoCard";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { icons } from "@/constants";
 import InfoBox from "@/components/InfoBox";
@@ -25,7 +25,12 @@ const Profile = () => {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
 
   const { data: posts, refetch } = useAppwrite(() => getUserPosts(user?.$id));
-  const logout = () => {};
+  const logout = async () => {
+    await signOut();
+    setUser(null);
+    setIsLoggedIn(false);
+    router.replace("/signIn");
+  };
 
   return (
     <SafeAreaView className=" bg-primary h-full">
@@ -88,7 +93,7 @@ const Profile = () => {
               <InfoBox
                 title="1.2k"
                 subtitle="Followers"
-                containerStyles="mt-5"
+                containerStyles="mt-10"
                 titleStyles="text-xl"
               />
             </View>
